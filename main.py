@@ -104,7 +104,7 @@ async def get_ssl_job():
             child.sendline('\n')
 
 
-@app.get("/certificate/{challenge_route}")
+@app.get("/.well-known/acme-challenge/{challenge_route}")
 async def get_certificate(challenge_route: str):
     result = collection.find_one({
         "challengeRoute": challenge_route
