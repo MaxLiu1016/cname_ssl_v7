@@ -1,8 +1,9 @@
-
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from pymongo.mongo_client import MongoClient
 from bson.objectid import ObjectId
 from pydantic import BaseModel, field_validator
+import pexpect
+import time
 import re
 import json
 
@@ -14,9 +15,11 @@ class Job(BaseModel):
     domain: str
 
     @field_validator("domain")
-    def domain_validator(cls, v):
+    def check_domain(cls, v):
         if not is_subdomain(v):
-            raise ValueError("domain is not valid")
+            raise HTTPException(status_code=400, detail="domain is not a subdomain")
+        else:
+            return v
 
 
 class JSONEncoder(json.JSONEncoder):
@@ -64,8 +67,7 @@ async def say_hello(name: str):
 async def create_job(job: Job):
     collection.insert_one(job.model_dump())
     return {
-        "status": "fail",
-        "message": "domain is not valid"
+        "status": "success",
     }
 
 
@@ -76,3 +78,37 @@ async def get_jobs():
     jobs = list(jobs_cursor)
     return {"jobs": jobs}
 
+
+@app.get("sslJob")
+async def get_ssl_job():
+    # Start the subprocess
+    child = pexpect.spawn(
+        'sudo certbot certonly --email a0958057936@gmail.com -d test.hqsmaxtest.online --agree-tos --manual --staging --config-dir /Users/manias/Desktop/work_space/cname_ssl_v7')
+
+    # Wait for password prompt and send password
+    index = child.expect(['Password:'])
+    if index == 0:
+        child.sendline('951753')
+        time.sleep(5)  # Wait for 5 seconds
+
+        child.expect('Press Enter to Continue')
+        print(child.before.decode('utf-8'))
+        challengeData = child.before.decode('utf-8')
+        collection.insert_one({'domain': 'test.hqsmaxtest.online', 'challengeData': challengeData})
+        # with open('challenge_info.txt', 'w') as file:
+        #     # Write the challenge data and URL to the file
+        #     file.write('Challenge data: ' + child.before.decode('utf-8') + '\n')
+
+        index = child.expect(['Press Enter to Continue'])
+        if index == 0:
+            child.sendline('\n')
+
+
+@app.get("/certificate/{challenge_route}")
+async def get_certificate(challenge_route: str):
+    result = collection.find_one({
+        "challengeRoute": challenge_route
+    }, {"_id": 0})
+    # result['challengeData'] 純文字 排除"
+    s = result['challengeData'].replace('"', '')
+    return Response(content=s, media_type="text/plain")
