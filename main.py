@@ -27,7 +27,7 @@ async def root():
 
 @app.get("/.well-known/acme-challenge/{challenge_route}")
 async def get_certificate(challenge_route: str, response: Response):
-    full_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'zero_ssl', 'module', 'ssl', 'temp_ssl', 'test.hqsmaxtest.online')
+    full_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'cname_ssl_v7', 'module', 'ssl', 'temp_ssl', 'test.hqsmaxtest.online')
     with open(os.path.join(full_path, challenge_route), 'r') as f:
         response.body = f.read()
     response.headers['Content-Type'] = 'text/plain'
