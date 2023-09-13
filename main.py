@@ -20,7 +20,7 @@ async def root():
         # print(f'sudo ~/.acme.sh/acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force')
         # 開放權限
         os.system(f'sudo chmod 777 {full_path}')
-        os.system(f'acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem')
+        os.system(f'acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force')
     except Exception as e:
         print(e)
 
