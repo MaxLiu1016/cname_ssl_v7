@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Response
 from dotenv import load_dotenv
+import time
 import os
 
 load_dotenv()
@@ -27,6 +28,8 @@ async def root():
 
 @app.get("/.well-known/acme-challenge/{challenge_route}")
 async def get_certificate(challenge_route: str, response: Response):
+    # 暫停五秒
+    time.sleep(5)
     full_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'cname_ssl_v7', 'module', 'ssl', 'temp_ssl', 'test.hqsmaxtest.online')
     with open(os.path.join(full_path, '.well-known', 'acme-challenge', challenge_route), 'r') as f:
         response.body = f.read()
