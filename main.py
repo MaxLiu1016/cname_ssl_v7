@@ -17,8 +17,10 @@ async def root():
         if not os.path.exists(full_path):
             os.makedirs(full_path)
         os.system(f'sudo openssl req -new -newkey rsa:2048 -nodes -keyout {full_path}/privkey.pem -out {full_path}/csr.pem -subj "/CN={domain}"')
-        print(f'sudo ~/.acme.sh/acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force')
-        # os.system(f'sudo ~/.acme.sh/acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem')
+        # print(f'sudo ~/.acme.sh/acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force')
+        # 開放權限
+        os.system(f'sudo chmod 777 {full_path}')
+        os.system(f'acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem')
     except Exception as e:
         print(e)
 
