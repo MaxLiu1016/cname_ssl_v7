@@ -12,7 +12,7 @@ async def root():
         domain = 'test.hqsmaxtest.online'
         current_file_path = os.path.abspath(__file__)
         project_path = os.path.dirname(os.path.dirname(current_file_path))
-        temp_ssl_path = os.path.join(project_path, 'zero_ssl', 'module', 'ssl', 'temp_ssl')
+        temp_ssl_path = os.path.join(project_path, 'cname_ssl_v7', 'module', 'ssl', 'temp_ssl')
         full_path = os.path.join(temp_ssl_path, domain)
         if not os.path.exists(full_path):
             os.makedirs(full_path)
