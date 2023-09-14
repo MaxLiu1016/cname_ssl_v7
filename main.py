@@ -24,9 +24,8 @@ async def domain():
         if not os.path.exists(full_path):
             os.makedirs(full_path)
         await run_command(f'sudo openssl req -nodes -newkey rsa:2048 -sha256 -keyout {full_path}/privkey.key -out {full_path}/csr.pem -subj "/CN={domain}"')
-        print(f'sudo openssl req -new -newkey rsa:2048 -nodes -keyout {full_path}/privkey.pem -out {full_path}/csr.pem -subj "/CN={domain}"')
         await run_command(f'sudo chmod -R 777 {full_path}')
-        await run_command(f'acme.sh --issue --webroot {full_path} -d {domain} --signcsr --csr {full_path}/csr.pem --fullchain-file {full_path}/fullchain.pem --force --debug')
+        await run_command(f'acme.sh --issue --webroot {full_path} -d {domain} --signcsr --csr {full_path}/csr.pem --fullchain-file {full_path}/fullchain.pem --force')
         return {"message": "success"}
     except Exception as e:
         print(e)
