@@ -9,6 +9,11 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
+    return {"message": "Hello World"}
+
+
+@app.get("/domain")
+async def domain():
     try:
         domain = 'test.hqsmaxtest.online'
         current_file_path = os.path.abspath(__file__)
