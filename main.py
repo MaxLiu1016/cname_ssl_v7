@@ -2,6 +2,7 @@ from fastapi import FastAPI, Response
 from dotenv import load_dotenv
 import time
 import os
+import asyncio
 
 load_dotenv()
 app = FastAPI()
@@ -22,14 +23,26 @@ async def domain():
         full_path = os.path.join(temp_ssl_path, domain)
         if not os.path.exists(full_path):
             os.makedirs(full_path)
-        os.system(f'sudo openssl req -new -newkey rsa:2048 -nodes -keyout {full_path}/privkey.pem -out {full_path}/csr.pem -subj "/CN={domain}"')
-        # print(f'sudo ~/.acme.sh/acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force')
-        # 開放 full_path 裡面的檔案權限
-        os.system(f'sudo chmod -R 777 {full_path}')
-        os.system(f'acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force --debug')
+        await run_command(f'sudo openssl req -new -newkey rsa:2048 -nodes -keyout {full_path}/privkey.pem -out {full_path}/csr.pem -subj "/CN={domain}"')
+        await run_command(f'sudo chmod -R 777 {full_path}')
+        await run_command(f'acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force --debug')
         return {"message": "success"}
     except Exception as e:
         print(e)
+        return {"message": f"error: {e}"}
+
+
+async def run_command(cmd: str):
+    process = await asyncio.create_subprocess_shell(
+        cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+
+    stdout, stderr = await process.communicate()
+
+    if process.returncode != 0:
+        raise RuntimeError(f"'{cmd}' failed with error code {process.returncode}: {stderr.decode().strip()}")
 
 
 @app.get("/.well-known/acme-challenge/{challenge_route}")
