@@ -33,10 +33,13 @@ async def domain():
 
 @app.get("/.well-known/acme-challenge/{challenge_route}")
 async def get_certificate(challenge_route: str, response: Response):
-    print(challenge_route)
-    full_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'cname_ssl_v7', 'module', 'ssl', 'temp_ssl', 'test.hqsmaxtest.online')
-    print(full_path)
-    with open(os.path.join(full_path, '.well-known', 'acme-challenge', challenge_route), 'r') as f:
-        response.body = f.read()
-    response.headers['Content-Type'] = 'text/plain'
-    return response
+    try:
+        print(challenge_route)
+        full_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'cname_ssl_v7', 'module', 'ssl', 'temp_ssl', 'test.hqsmaxtest.online')
+        print(full_path)
+        with open(os.path.join(full_path, '.well-known', 'acme-challenge', challenge_route), 'r') as f:
+            response.body = f.read()
+        response.headers['Content-Type'] = 'text/plain'
+        return response
+    except Exception as e:
+        print(e)
