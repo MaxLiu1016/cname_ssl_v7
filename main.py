@@ -26,7 +26,7 @@ async def domain():
         # print(f'sudo ~/.acme.sh/acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force')
         # 開放 full_path 裡面的檔案權限
         os.system(f'sudo chmod -R 777 {full_path}')
-        os.system(f'acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force')
+        os.system(f'acme.sh --issue --webroot {full_path} -d {domain} --csr {full_path}/csr.pem --fullchainpath {full_path}/fullchain.pem --keypath {full_path}/privkey.pem --force --debug')
     except Exception as e:
         print(e)
 
